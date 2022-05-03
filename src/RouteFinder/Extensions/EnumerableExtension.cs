@@ -1,4 +1,6 @@
-﻿namespace RouteFinder.Extensions;
+﻿using RouteFinder.Data.Models;
+
+namespace RouteFinder.Extensions;
 public static class EnumerableExtension
 {
     public static IEnumerable<(T First, T Second)> ShiftAndZipWithSelf<T>(
@@ -9,4 +11,25 @@ public static class EnumerableExtension
         toList.AddRange(endElements);
         return enumerable.Zip(toList);
     }
+
+
+    public static TimeOnly GetTotalTime(this IEnumerable<RouteSegment> segments,TimeOnly currentTime)
+    {
+        var firstSegment = segments.First();
+        var warpedTime = currentTime;
+        warpedTime = firstSegment.Transport.WhenWillBeAt(firstSegment.From, warpedTime).Value;
+
+        foreach (var item in segments.ShiftAndZipWithSelf())
+        {
+            warpedTime = warpedTime.Add(item.First.TravelTime.ToTimeSpan());
+
+            if (item.First.Transport.Equals(item.Second.Transport)
+                || item.Second.Equals(firstSegment)) continue;
+            // if not same transport =>
+            warpedTime = item.Second.Transport.WhenWillBeAt(item.Second.From, warpedTime).GetValueOrDefault();
+        }
+
+        return warpedTime.Add(-currentTime.ToTimeSpan());
+    }
+
 }

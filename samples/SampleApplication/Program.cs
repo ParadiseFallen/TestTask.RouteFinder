@@ -53,7 +53,7 @@ do
         continue;
     }
 
-    PrintResult(path);
+    PrintResult(path,currentTime);
 
     Console.WriteLine();
     Console.WriteLine("Press any key");
@@ -62,14 +62,19 @@ do
 } while (!isExited);
 
 
-static void PrintResult(IEnumerable<RouteSegment> routeSegments)
+static void PrintResult(IEnumerable<RouteSegment> routeSegments,TimeOnly startTime)
 {
     var firstSegment = routeSegments.First();
     var totalPrice = routeSegments.Select(x => x.Transport).DistinctBy(x => x.Id).Select(x => x.Price).Aggregate((prev, current) => prev + current);
 
+   
+
     Console.WriteLine();
 
     Console.WriteLine($"Total cost : {totalPrice} RUB");
+
+
+    Console.WriteLine($"Total time : {routeSegments.GetTotalTime(startTime)}");
 
     Console.WriteLine();
 

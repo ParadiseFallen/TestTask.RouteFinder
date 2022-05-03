@@ -20,6 +20,13 @@ public class TimeRespectWeighter : IRouteSegmentWeigher
             waitTime = nextTransportTime!.Value.Add(-whenWillBeAtThisStop.ToTimeSpan());
         }
 
+        if (previousSegment is null)
+            waitTime = currentSegment
+                .Transport
+                .WhenWillBeAt(currentSegment.To, CurrentTime)
+                .GetValueOrDefault()
+                .Add(-CurrentTime.ToTimeSpan());
+
         return currentCost
             + (ulong)(waitTime.Minute)
             + (ulong)(currentSegment.TravelTime.Minute)
