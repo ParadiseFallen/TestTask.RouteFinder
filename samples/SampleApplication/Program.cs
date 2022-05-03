@@ -1,6 +1,4 @@
-﻿
-
-using RouteFinder.Abstractions.Services.Routing;
+﻿using RouteFinder.Abstractions.Services.Routing;
 using RouteFinder.Data.Models;
 using RouteFinder.Extensions;
 using RouteFinder.Services.Routing;
